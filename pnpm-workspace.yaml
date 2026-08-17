@@ -4,3 +4,7 @@ packages:
 
 allowBuilds:
   'nx@23.1.1': true
+  unrs-resolver: true
+  "@nestjs/core": false
+  '@parcel/watcher': true
+  less: true
