@@ -1,0 +1,17 @@
+.git
+.github
+node_modules
+.pnpm-store
+.nx
+dist
+coverage
+.data
+logs
+*.log
+.env
+.env.*
+!config/env/.env.example
+!config/env/.env.development.example
+!config/env/.env.test.example
+README.md
+docs

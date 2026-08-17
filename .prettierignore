@@ -1,0 +1,8 @@
+node_modules/
+.pnpm-store/
+.nx/
+dist/
+coverage/
+.data/
+logs/
+pnpm-lock.yaml
