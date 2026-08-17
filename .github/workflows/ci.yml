@@ -61,4 +61,4 @@ jobs:
 
       - name: Stop infrastructure
         if: always()
-        run: pnpm infra:down
+        run: docker compose --env-file config/env/.env.development.example -f infra/docker/docker-compose.yml down
