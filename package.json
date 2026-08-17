@@ -1,0 +1,24 @@
+{
+  "name": "jobhunt",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Automation-first job discovery and application platform.",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@11.18.0",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=11 <12"
+  },
+  "scripts": {
+    "bootstrap": "bash scripts/bootstrap.sh",
+    "dev": "bash scripts/dev.sh",
+    "test": "bash scripts/test.sh",
+    "ci": "bash scripts/ci.sh",
+    "format": "pnpm dlx prettier@3.9.6 --write .",
+    "format:check": "pnpm dlx prettier@3.9.6 --check .",
+    "infra:up": "docker compose --env-file .env -f infra/docker/docker-compose.yml up -d",
+    "infra:down": "docker compose --env-file .env -f infra/docker/docker-compose.yml down",
+    "infra:logs": "docker compose --env-file .env -f infra/docker/docker-compose.yml logs -f",
+    "infra:validate": "docker compose --env-file config/env/.env.development.example -f infra/docker/docker-compose.yml config --quiet"
+  }
+}
