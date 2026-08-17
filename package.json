@@ -16,9 +16,16 @@
     "ci": "bash scripts/ci.sh",
     "format": "pnpm dlx prettier@3.9.6 --write .",
     "format:check": "pnpm dlx prettier@3.9.6 --check .",
-    "infra:up": "docker compose --env-file .env -f infra/docker/docker-compose.yml up -d",
+    "nx": "nx",
+    "nx:graph": "nx graph",
+    "nx:projects": "nx show projects",
+    "nx:affected": "nx affected -t lint,test,build,typecheck",
+    "infra:up": "docker compose --env-file .env -f infra/docker/docker-compose.yml up -d --wait",
     "infra:down": "docker compose --env-file .env -f infra/docker/docker-compose.yml down",
     "infra:logs": "docker compose --env-file .env -f infra/docker/docker-compose.yml logs -f",
     "infra:validate": "docker compose --env-file config/env/.env.development.example -f infra/docker/docker-compose.yml config --quiet"
+  },
+  "devDependencies": {
+    "nx": "23.1.1"
   }
 }

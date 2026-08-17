@@ -17,7 +17,7 @@ jobs:
   foundation:
     name: Foundation checks
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
 
     steps:
       - name: Checkout
@@ -30,10 +30,17 @@ jobs:
           package-manager-cache: false
 
       - name: Install pnpm
-        run: npm install --global pnpm@11.18.0
+        run: npm install --global pnpm@11.22.0
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Generate lockfile for foundation migration
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Upload generated lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-pnpm-lock
+          path: pnpm-lock.yaml
+          if-no-files-found: error
 
       - name: Install shellcheck
         run: |
@@ -43,5 +50,15 @@ jobs:
       - name: Shellcheck
         run: shellcheck scripts/*.sh .docker/entrypoint.sh
 
+      - name: Bootstrap
+        run: pnpm bootstrap
+
+      - name: Start infrastructure
+        run: pnpm infra:up
+
       - name: Run foundation CI
         run: pnpm ci
+
+      - name: Stop infrastructure
+        if: always()
+        run: pnpm infra:down

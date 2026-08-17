@@ -2,22 +2,42 @@
 
 ## Foundation principles
 
-JobHunt is designed as a connector-driven automation platform. External systems such as Jobinja, JobVision, Telegram, and future sources must be integrated behind explicit connector interfaces so the core domain never depends on platform-specific APIs, DOM selectors, or authentication details.
+JobHunt is a connector-driven automation platform. External systems such as Jobinja, JobVision, Telegram, E-Estekhdam, and future sources are integrated behind explicit connector interfaces so core logic never depends on platform-specific APIs, DOM selectors, or authentication details.
 
 High-level flow:
 
 `Source -> Connector -> Normalize -> Deduplicate -> Score -> Decide -> Apply -> Verify -> Track`
 
-Infrastructure concerns are kept outside application/domain code. PostgreSQL is the durable system of record and Redis is reserved for ephemeral coordination such as caching, locks, and queues.
+PostgreSQL is the durable system of record. Redis is reserved for ephemeral coordination such as caching, locks, and queues.
 
-## Phase boundaries
+## Workspace boundaries
 
-This repository currently contains the project foundation only. NestJS application structure, workflow orchestration, browser automation, and connector implementations are intentionally added in later phases so infrastructure decisions remain testable and reversible.
+```text
+apps/
+  api/          # HTTP/API runtime
+  worker/       # background/workflow runtime
+  mcp-server/   # MCP/agent tool runtime
 
-## Rules
+packages/
+  core/         # platform-agnostic domain/application concepts
+  database/     # persistence adapters
+  config/       # validated runtime configuration
+  contracts/    # shared schemas and integration contracts
+  connectors/   # external platform adapters/connectors
+```
 
+The directories are registered as Nx projects before application code is introduced. NestJS is intentionally deferred to the next phase.
+
+## Dependency direction
+
+- Applications may depend on packages; packages never depend on applications.
+- `core` stays platform-agnostic and does not depend on `database` or `connectors`.
+- `database` and `connectors` may implement interfaces owned by `core`.
+- Cross-runtime communication uses explicit contracts from `contracts` rather than importing application internals.
 - External platform behavior belongs in connectors/adapters.
-- Core workflows depend on interfaces, not platform implementations.
 - Automated application actions must be observable, idempotent where possible, and verifiable.
 - Secrets never belong in source control.
-- Prefer one deployable application until scale or isolation requirements justify additional services.
+
+## Scaling rule
+
+Start with the minimum number of deployable runtimes above. Split services only when isolation, independent scaling, reliability, or ownership requirements provide a measurable reason.
