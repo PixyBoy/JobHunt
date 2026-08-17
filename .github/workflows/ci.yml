@@ -17,7 +17,7 @@ jobs:
   foundation:
     name: Foundation checks
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
 
     steps:
       - name: Checkout
@@ -30,10 +30,7 @@ jobs:
           package-manager-cache: false
 
       - name: Install pnpm
-        run: npm install --global pnpm@11.18.0
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm install --global pnpm@11.22.0
 
       - name: Install shellcheck
         run: |
@@ -43,5 +40,15 @@ jobs:
       - name: Shellcheck
         run: shellcheck scripts/*.sh .docker/entrypoint.sh
 
+      - name: Bootstrap
+        run: pnpm bootstrap
+
+      - name: Start infrastructure
+        run: pnpm infra:up
+
       - name: Run foundation CI
         run: pnpm ci
+
+      - name: Stop infrastructure
+        if: always()
+        run: docker compose --env-file config/env/.env.development.example -f infra/docker/docker-compose.yml down
